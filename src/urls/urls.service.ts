@@ -18,4 +18,8 @@ export class UrlsService {
     const url = this.urlsRepository.create({ originalUrl, shortCode, userId });
     return await this.urlsRepository.save(url);
   }
+
+  async findByShortCode(shortCode: string): Promise<Url | null> {
+    return await this.urlsRepository.findOne({ where: { shortCode } });
+  }
 }
