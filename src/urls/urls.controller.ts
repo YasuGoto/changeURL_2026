@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   Res,
+  Delete,
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -21,6 +22,18 @@ export class UrlsController {
   create(@Body() body: { originalUrl: string }, @Request() req: any) {
     const shortCode = Math.random().toString(36).substring(2, 8);
     return this.urlsService.create(body.originalUrl, shortCode, req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('urls')
+  findAll(@Request() req: any) {
+    return this.urlsService.findByUserId(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('urls/:id')
+  remove(@Param('id') id: string, @Request() req: any) {
+    return this.urlsService.delete(Number(id), req.user.sub);
   }
 
   @Get(':shortCode')
