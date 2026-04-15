@@ -12,6 +12,7 @@ import {
 import { UrlsService } from './urls.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { Response } from 'express';
+import type { RequestWithUser } from '../types/request-with-user';
 
 @Controller()
 export class UrlsController {
@@ -19,20 +20,23 @@ export class UrlsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('urls')
-  create(@Body() body: { originalUrl: string }, @Request() req: any) {
+  create(
+    @Body() body: { originalUrl: string },
+    @Request() req: RequestWithUser,
+  ) {
     const shortCode = Math.random().toString(36).substring(2, 8);
     return this.urlsService.create(body.originalUrl, shortCode, req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('urls')
-  findAll(@Request() req: any) {
+  findAll(@Request() req: RequestWithUser) {
     return this.urlsService.findByUserId(req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('urls/:id')
-  remove(@Param('id') id: string, @Request() req: any) {
+  remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.urlsService.delete(Number(id), req.user.sub);
   }
 
